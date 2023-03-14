@@ -5,94 +5,164 @@
 #include <string>
 using namespace std;
 
-vector<string> dataNames;
-vector<string> dataURLs;
+vector<vector<string>> dataLists;
+string channelName, channelURL, line;
+int input, count, lineNumber;
+
+void readData()
+{
+    ifstream inputFile;
+    count = 1;
+    dataLists.clear();
+    inputFile.open("channelData.txt");
+    if (!inputFile)
+    {
+        cout << "File error" << endl;
+        return;
+    }
+    while (getline(inputFile, line))
+    {
+        size_t delimiter = line.find(",");
+        if (delimiter != string::npos)
+        {
+            string name = line.substr(0, delimiter);
+            string url = line.substr(delimiter + 1);
+            dataLists.push_back(vector<string>{name});
+            dataLists[count - 1].push_back(url);
+            cout << count << "." << name << ", " << url << endl;
+            count++;
+        }
+    }
+    inputFile.close();
+}
+
+void inputDecision()
+{
+    cout << "0.Manage List" << endl;
+    readData();
+    cout << "Input : ";
+    cin >> input;
+}
+
+void inputData()
+{
+    cin.ignore();
+    system("cls");
+    cout << "Enter Channel Name : ";
+    getline(cin, channelName);
+    cout << "Enter Channel URL : ";
+    cin >> channelURL;
+}
 
 void writeData(string name, string url)
 {
-    ofstream outputFileName, outputFileURL;
-    outputFileName.open("channelName.txt", ios::app);
-    outputFileURL.open("channelURL.txt", ios::app);
-    if (!outputFileName || !outputFileURL)
+    ofstream outputFile;
+    outputFile.open("channelData.txt", ios::app);
+    if (!outputFile)
     {
         cout << "File error" << endl;
+        return;
     }
-    outputFileName << name << endl;
-    outputFileName.close();
-    outputFileURL << url << endl;
-    outputFileURL.close();
+    outputFile << name << "," << url << endl;
+    outputFile.close();
 }
 
-void readName()
+void CRUDDecision()
 {
-    ifstream input_file("channelName.txt");
-    string line;
-    int line_number = 1;
-    if (input_file.is_open())
-    {
-        while (getline(input_file, line))
-        {
-            if (!input_file.eof())
-            {
-                cout << line_number << "." << line << endl;
-                dataNames.push_back(line);
-                line_number++;
-            }
-        }
-        input_file.close();
-    }
-    else
-    {
-        std::cerr << "Failed to open file" << std::endl;
-    }
+    system("cls");
+    cout << "1.Create Data" << endl
+         << "2.Update Data" << endl
+         << "3.Delete Data" << endl
+         << "Input : ";
+    cin >> input;
 }
 
-void readURL()
+void rewriteData(string option)
 {
-    ifstream input_file("channelURL.txt");
-    string line;
-    int line_number = 1;
-    if (input_file.is_open())
+    system("cls");
+    count = 1;
+    cout << "Please Choose Data To " << option << endl;
+    for (int i = 0; i < dataLists.size(); i++)
     {
-        while (getline(input_file, line))
+        cout << count << "." << dataLists[i][0] << "," << dataLists[i][1] << endl;
+        count++;
+    }
+    cout << "Input : ";
+    cin >> input;
+}
+
+void replaceData(string type)
+{
+    ifstream inputFile("channelData.txt");
+    ofstream outputFile("channelData.txt", ios::app);
+    ofstream tempFile("temp.txt");
+    lineNumber = 0;
+    while (getline(inputFile, line))
+    {
+        if (type == "Edit")
         {
-            if (!input_file.eof())
+            if (lineNumber == input - 1)
             {
-                dataURLs.push_back(line);
-                line_number++;
+                tempFile << channelName << "," << channelURL << endl;
+            }
+            else
+            {
+                tempFile << line << endl;
             }
         }
-        input_file.close();
+        else if (type == "Delete")
+        {
+            if (lineNumber == input - 1)
+            {
+            }
+            else
+            {
+                tempFile << line << endl;
+            }
+        }
+        lineNumber++;
     }
-    else
-    {
-        std::cerr << "Failed to open file" << std::endl;
-    }
+    inputFile.close();
+    outputFile.close();
+    tempFile.close();
+    remove("channelData.txt");
+    rename("temp.txt", "channelData.txt");
 }
 
 main()
 {
-    int input;
-    cout << "0.New Input" << endl;
-    readName();
-    readURL();
-    cout << "Input : ";
-    cin >> input;
+opening:
+    system("cls");
+    inputDecision();
     if (input == 0)
     {
-        cin.ignore();
-        system("cls");
-        int write;
-        string channelName, channelURL;
-        cout << "Enter Channel Name : ";
-        getline(cin, channelName);
-        cout << "Enter Channel URL : ";
-        cin >> channelURL;
-        writeData(channelName, channelURL);
+        CRUDDecision();
+        if (input == 1)
+        {
+            inputData();
+            writeData(channelName, channelURL);
+        }
+        else if (input == 2)
+        {
+            rewriteData("Edit");
+            inputData();
+            replaceData("Edit");
+        }
+        else if (input == 3)
+        {
+            rewriteData("Delete");
+            replaceData("Delete");
+        }
     }
     else
     {
-       system(("start " + dataURLs[input - 1]).c_str());
+        system(("start " + dataLists[input - 1][1]).c_str());
+    }
+    cout << "Please enter Y to restart program ";
+    cin >> line;
+    if (line == "y" || line == "y")
+    {
+        goto opening;
     }
     return 0;
 }
