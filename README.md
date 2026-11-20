@@ -11,7 +11,7 @@ Overall, social media can be a major distraction that can affect your ability to
 
 ## Web app
 
-The `web/` folder is a browser version of the original C++ console app ([main.cpp](main.cpp)). It needs no build step and no server code.
+YoutubeFocus is a static web app in the `web/` folder. It needs no build step and no server code. (It started as a Windows C++ console program, which this replaced.)
 
 - Click a channel (or press `1`–`9`) to open it in a new tab. Press `/` to filter the list.
 - **Manage list** lets you add, edit, reorder and delete channels. Only `http(s)` links are accepted.
@@ -21,7 +21,7 @@ The `web/` folder is a browser version of the original C++ console app ([main.cp
 - Deleting, resetting and importing can be undone from the message that pops up.
 - **Install app** (Chrome/Edge) puts it in its own window, and it keeps working offline.
 - Site icons are loaded from each site itself, never from a third-party icon service.
-- Your list is saved in the browser's localStorage. **Export list** downloads it as `channelData.txt`, and **Import list** reads that file (the same `Name,URL` format the console app uses) or a JSON export.
+- Your list is saved in the browser's localStorage. **Export list** downloads it as `channelData.txt`, and **Import list** reads that file (one `Name,URL` per line) or a JSON export.
 
 Run it locally:
 

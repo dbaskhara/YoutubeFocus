@@ -9,7 +9,7 @@ const KEYS = {
 };
 const APP_TITLE = "YoutubeFocus";
 
-// Seeded from the original channelData.txt.
+// Default list for a first visit.
 const DEFAULTS = [
   ["Chat GPT", "https://chat.openai.com/chat"],
   ["Iman Gadzhi", "https://www.youtube.com/@ImanGadzhi"],
